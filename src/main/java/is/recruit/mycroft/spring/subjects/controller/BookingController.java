@@ -15,12 +15,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 @RestController
@@ -46,8 +46,9 @@ public class BookingController {
     public ResponseEntity<Mono<?>> createBooking(
             @Parameter(description = "영화id", required = true, example = "숫자")
             @RequestBody(required = true) BookingRequest bookingRequest,
-            @RequestHeader("Authorization") String authorization
+            HttpServletRequest request
     ) {
+        String authorization = request.getHeader("Authorization");
         String token = authorization.substring(7);
         User user = userService.getUser(jwtTokenProvider.getUsername(token));
         Theater theater = theaterRepository.findById((long) bookingRequest.getTheaterId()).get();

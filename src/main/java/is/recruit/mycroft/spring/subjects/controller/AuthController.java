@@ -3,7 +3,6 @@ package is.recruit.mycroft.spring.subjects.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import is.recruit.mycroft.spring.subjects.config.JwtTokenProvider;
 import is.recruit.mycroft.spring.subjects.model.dto.ApiMessage;
 import is.recruit.mycroft.spring.subjects.model.dto.AuthRequest;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Auth")
 @RequestMapping("/api")
 public class AuthController {
 
@@ -36,8 +34,7 @@ public class AuthController {
     @Operation(summary = "토큰 정보 생성", description = "유저 정보를 통해 토큰 정보를 생성한다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "created"),
-            @ApiResponse(responseCode = "400", description = "bad request"),
-            @ApiResponse(responseCode = "401", description = "not found"),
+            @ApiResponse(responseCode = "400", description = "bad request")
     })
     @PostMapping("/login")
     public ResponseEntity<Mono<?>> loginAndGetToken(AuthRequest authRequest) throws Exception {

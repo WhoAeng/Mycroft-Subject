@@ -9,7 +9,8 @@ import is.recruit.mycroft.spring.subjects.model.dto.ApiMessage;
 import is.recruit.mycroft.spring.subjects.model.entity.Booking;
 import is.recruit.mycroft.spring.subjects.model.entity.Ticket;
 import is.recruit.mycroft.spring.subjects.model.entity.User;
-import is.recruit.mycroft.spring.subjects.repository.*;
+import is.recruit.mycroft.spring.subjects.repository.BookingRepository;
+import is.recruit.mycroft.spring.subjects.repository.TicketRepository;
 import is.recruit.mycroft.spring.subjects.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +30,6 @@ public class TicketController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
-    private final TheaterRepository theaterRepository;
-    private final MovieRepository movieRepository;
-    private final SeatRepository seatRepository;
     private final BookingRepository bookingRepository;
     private final TicketRepository ticketRepository;
 
@@ -43,9 +42,9 @@ public class TicketController {
     public ResponseEntity<Flux<?>> getAllByUser(
             @Parameter(description = "사용자id", required = true, example = "숫자")
             @PathVariable Long id,
-            @RequestHeader("Authorization") String authorization
-
+            HttpServletRequest request
     ) {
+        String authorization = request.getHeader("Authorization");
         String token = authorization.substring(7);
         User user = userService.getUser(jwtTokenProvider.getUsername(token));
         List<Long> idList = new ArrayList<>();
@@ -68,8 +67,9 @@ public class TicketController {
     public ResponseEntity<Mono<?>> getBookingByTicketId(
             @Parameter(description = "티켓id", required = true, example = "숫자")
             @PathVariable Long id,
-            @RequestHeader("Authorization") String authorization
+            HttpServletRequest request
     ) {
+        String authorization = request.getHeader("Authorization");
         String token = authorization.substring(7);
         User user = userService.getUser(jwtTokenProvider.getUsername(token));
 

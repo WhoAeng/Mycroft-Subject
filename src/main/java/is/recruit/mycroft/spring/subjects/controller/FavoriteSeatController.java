@@ -16,9 +16,13 @@ import is.recruit.mycroft.spring.subjects.repository.TheaterRepository;
 import is.recruit.mycroft.spring.subjects.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +45,9 @@ public class FavoriteSeatController {
     public ResponseEntity<Flux<?>> findAll(
             @PathVariable
             @Parameter(description = "상영관id", required = true, example = "숫자") int id,
-            @RequestHeader("Authorization") String authorization
+            HttpServletRequest request
     ) {
+        String authorization = request.getHeader("Authorization");
         String token = authorization.substring(7);
         User user = userService.getUser(jwtTokenProvider.getUsername(token));
         FavoriteSeat favoriteSeat = user.getFavoriteSeat();
