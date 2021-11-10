@@ -37,7 +37,7 @@ public class TicketController {
     @Operation(summary = "티켓 정보 확인", description = "티켓id를 사용하여 예매 정보를 확인한다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "ok"),
-            @ApiResponse(responseCode = "401", description = "not found")
+            @ApiResponse(responseCode = "404", description = "not found")
     })
     public ResponseEntity<Flux<?>> getAllByUser(
             @Parameter(description = "사용자id", required = true, example = "숫자")
@@ -48,7 +48,7 @@ public class TicketController {
         String token = authorization.substring(7);
         User user = userService.getUser(jwtTokenProvider.getUsername(token));
         List<Long> idList = new ArrayList<>();
-        if (user.getId() != id) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Flux.just("본인의 티켓만 조회할 수 있습니다"));
+        if (!user.getId().equals(id)) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Flux.just("본인의 티켓만 조회할 수 있습니다"));
         idList.add(user.getId());
         List<Ticket> ticketList = ticketRepository.findAllById(idList);
         if (ticketList.size() == 0) {
@@ -62,7 +62,7 @@ public class TicketController {
     @Operation(summary = "예매 정보 확인", description = "티켓id를 사용하여 예매 정보를 확인한다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "ok"),
-            @ApiResponse(responseCode = "401", description = "not found")
+            @ApiResponse(responseCode = "404", description = "not found")
     })
     public ResponseEntity<Mono<?>> getBookingByTicketId(
             @Parameter(description = "티켓id", required = true, example = "숫자")

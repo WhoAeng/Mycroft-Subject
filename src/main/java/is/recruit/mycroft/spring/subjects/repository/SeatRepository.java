@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
-    List<Seat> findAllByTheaterId(int theaterId);
-    Seat findByTheaterIdAndBookingIdAndSeatXAndSeatY(int theaterId, int bookingId, int seatX, int seatY);
+    List<Seat> findAllByTheaterId(Long theaterId);
+    Seat findByTheaterIdAndBookingIdAndSeatXAndSeatY(Long theaterId, int bookingId, int seatX, int seatY);
 }

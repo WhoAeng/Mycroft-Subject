@@ -21,7 +21,7 @@ public class TheaterController {
     @Operation(summary = "영화별 상영관 조회" , description = "영화별로 상영관을 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "ok"),
-            @ApiResponse(responseCode = "401", description = "not found")
+            @ApiResponse(responseCode = "404", description = "not found")
     })
     public Flux<Theater> findAllByMovieIsNotNull(
     ){

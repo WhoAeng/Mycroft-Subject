@@ -27,7 +27,7 @@ public class MovieController {
     @Operation(summary = "영화 조회" , description = "영화id를 사용하여 영화 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "ok"),
-            @ApiResponse(responseCode = "401", description = "not found")
+            @ApiResponse(responseCode = "404", description = "not found")
     })
     public Mono<Optional<Movie>> findById(
             @Parameter(description = "영화id", required = true, example = "숫자")

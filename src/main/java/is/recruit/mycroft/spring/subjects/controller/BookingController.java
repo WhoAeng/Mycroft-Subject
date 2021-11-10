@@ -1,7 +1,6 @@
 package is.recruit.mycroft.spring.subjects.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -44,7 +43,6 @@ public class BookingController {
             @ApiResponse(responseCode = "422", description = "unprocessable entity")
     })
     public ResponseEntity<Mono<?>> createBooking(
-            @Parameter(description = "영화id", required = true, example = "숫자")
             @RequestBody(required = true) BookingRequest bookingRequest,
             HttpServletRequest request
     ) {

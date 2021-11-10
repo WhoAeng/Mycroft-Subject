@@ -15,6 +15,7 @@ import is.recruit.mycroft.spring.subjects.repository.SeatRepository;
 import is.recruit.mycroft.spring.subjects.repository.TheaterRepository;
 import is.recruit.mycroft.spring.subjects.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,20 +37,37 @@ public class FavoriteSeatController {
     private final FavoriteSeatRepository favoriteSeatRepository;
     private final TheaterRepository theaterRepository;
 
-    @GetMapping("/theater/{id}/favorite-seats")
+    @GetMapping("/favorite-seats")
+    @Operation(summary = "선호좌석 조회", description = "선호좌석 정보를 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "ok"),
+            @ApiResponse(responseCode = "404", description = "not found")
+    })
+    public ResponseEntity<Flux<?>> findAll(){
+        List<FavoriteSeat> favoriteSeatList = favoriteSeatRepository.findAll();
+        return ResponseEntity.ok().body(Flux.fromIterable(favoriteSeatList));
+    }
+
+    @GetMapping("/theater/{theaterId}/user/{userId}/favorite-seats")
     @Operation(summary = "상영관의 사용자 선호좌석 조회", description = "상영관id를 사용하여 사용자의 선호좌석 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "ok"),
-            @ApiResponse(responseCode = "401", description = "not found")
+            @ApiResponse(responseCode = "401", description = "unauthorized"),
+            @ApiResponse(responseCode = "404", description = "not found")
     })
-    public ResponseEntity<Flux<?>> findAll(
+    public ResponseEntity<Flux<?>> findAllTheaterFavoriteSeat(
             @PathVariable
-            @Parameter(description = "상영관id", required = true, example = "숫자") int id,
+            @Parameter(description = "상영관id", required = true, example = "숫자") Long theaterId,
+            @PathVariable
+            @Parameter(description = "사용자id", required = true, example = "숫자") Long userId,
             HttpServletRequest request
     ) {
         String authorization = request.getHeader("Authorization");
         String token = authorization.substring(7);
         User user = userService.getUser(jwtTokenProvider.getUsername(token));
+        if (!user.getId().equals(userId)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Flux.just("본인의 선호좌석만 조회할 수 있습니다"));
+        }
         FavoriteSeat favoriteSeat = user.getFavoriteSeat();
         if (favoriteSeat == null){
             return ResponseEntity.notFound().build();
@@ -62,7 +80,7 @@ public class FavoriteSeatController {
         System.out.println("yCode: " + yCode);
         System.out.println("xCode: " + xCode);
 
-        Theater theater = theaterRepository.getById((long) id);
+        Theater theater = theaterRepository.getById((long) theaterId);
         if (theater == null) {
             return ResponseEntity.badRequest().body(Flux.just(new ApiMessage("상영관을 찾을 수 없습니다")));
         }
@@ -110,7 +128,7 @@ public class FavoriteSeatController {
 
         for (int i = seatYStartIdx; i <= seatYEndIdx; i++) {
             for (int j = seatXStartIdx; j <= seatXEndIdx; j++) {
-                Seat seat = seatRepository.findByTheaterIdAndBookingIdAndSeatXAndSeatY(id, 0, j, i);
+                Seat seat = seatRepository.findByTheaterIdAndBookingIdAndSeatXAndSeatY(theaterId, 0, j, i);
                 if (seat!=null) seats.add(seat);
             }
         }

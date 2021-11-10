@@ -23,11 +23,11 @@ public class SeatController {
     @Operation(summary = "상영관 좌석정보 조회" , description = "상영관id를 사용하여 좌석 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "ok"),
-            @ApiResponse(responseCode = "401", description = "not found")
+            @ApiResponse(responseCode = "404", description = "not found")
     })
     public Flux<Seat> findAllByTheaterId(
             @PathVariable
-            @Parameter(description = "상영관id", required = true, example = "숫자") int id
+            @Parameter(description = "상영관id", required = true, example = "숫자") Long id
     ){
         return Flux.fromIterable( seatRepository.findAllByTheaterId(id));
     }
